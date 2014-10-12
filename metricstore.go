@@ -10,22 +10,22 @@ import (
 	"time"
 )
 
-type metricStore struct {
+type MetricStore struct {
 	baseDir string
 }
 
 type MetricPoint struct {
-	Timestamp time.Time
-	Value     float64
+	Timestamp time.Time `json:"ts"`
+	Value     float64   `json:"value"`
 }
 
-func NewMetricStore(baseDir string) *metricStore {
-	return &metricStore{
+func NewMetricStore(baseDir string) *MetricStore {
+	return &MetricStore{
 		baseDir: baseDir,
 	}
 }
 
-func (s *metricStore) Insert(host, metric string, timestamp time.Time, value float64) error {
+func (s *MetricStore) Insert(host, metric string, timestamp time.Time, value float64) error {
 	var err error
 
 	path := filepath.Join(s.baseDir, host)
@@ -53,7 +53,7 @@ func (s *metricStore) Insert(host, metric string, timestamp time.Time, value flo
 	return err
 }
 
-func (s *metricStore) Retrieve(host, metric string, start, end time.Time) []MetricPoint {
+func (s *MetricStore) Retrieve(host, metric string, start, end time.Time) []MetricPoint {
 	path := filepath.Join(s.baseDir, host)
 	metricsFile := filepath.Join(path, metric) + ".l"
 
