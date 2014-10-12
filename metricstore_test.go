@@ -17,4 +17,8 @@ func Test1(t *testing.T) {
 	}
 
 	t.Log(s.Retrieve("host1", "myMetric", start, start.Add(time.Minute)))
+
+	t.Log(s.Hosts())
+	t.Log(s.Metrics("host1"))
+
 }

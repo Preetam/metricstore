@@ -5,8 +5,10 @@ import (
 
 	"bytes"
 	"encoding/binary"
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -81,6 +83,38 @@ func (s *MetricStore) Retrieve(host, metric string, start, end time.Time) []Metr
 	l.Close()
 
 	return result
+}
+
+func (s *MetricStore) Hosts() []string {
+	hosts := []string{}
+	fileinfos, err := ioutil.ReadDir(s.baseDir)
+	if err != nil {
+		return hosts
+	}
+
+	for _, info := range fileinfos {
+		if info.IsDir() {
+			hosts = append(hosts, info.Name())
+		}
+	}
+
+	return hosts
+}
+
+func (s *MetricStore) Metrics(host string) []string {
+	metrics := []string{}
+	fileinfos, err := ioutil.ReadDir(filepath.Join(s.baseDir, host))
+	if err != nil {
+		return metrics
+	}
+
+	for _, info := range fileinfos {
+		if !info.IsDir() {
+			metrics = append(metrics, strings.TrimSuffix(info.Name(), ".l"))
+		}
+	}
+
+	return metrics
 }
 
 func timestampToBytes(t time.Time) []byte {
